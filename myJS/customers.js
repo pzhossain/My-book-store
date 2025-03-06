@@ -47,7 +47,8 @@ async function getAllCustomer() {
 
             //append table
             tableData.appendChild(row);
-        }) 
+        });
+
         //add event listener to Update btn
         document.querySelectorAll('.update-btn').forEach((btn)=>{
             btn.addEventListener('click',function(){
@@ -55,6 +56,12 @@ async function getAllCustomer() {
             });
         });
 
+        //add event lister to delete btn
+        document.querySelectorAll('.delete-btn').forEach((btn)=>{
+            btn.addEventListener('click',function(){
+                openDeleteModal(this.dataset.id);
+            });
+        });
     }catch(error){
         console.log("error loading customer", error);
         alert("failed to load customer.");
@@ -145,11 +152,81 @@ async function updateCustomer(){
 
     try{
         //Form validation
-        
+        if(!name || !email || !phone){
+            alert("all field required");
+            return;
+        }
+        //append data
+        let formData= new FormData();
+        formData.append("customer_id",customerId);
+        formData.append("name",name);
+        formData.append("email",email);
+        formData.append("phone",phone);
 
+        //sending requests
+        let request= await axios.post(updateUrl,formData);
+
+        //check response
+        if(request.status === 200){
+            //close Modal
+            let modalId= document.getElementById("updateCustomerModal");
+            let modal= bootstrap.Modal.getInstance(modalId) || new bootstrap.Modal(modalId);
+            modal.hide();
+
+            showMessage();
+            getAllCustomer();
+            return;
+        }
 
     }catch(error){
         console.log("error updating",error);
     }
 
+}
+
+//Delete customer modal
+let deleteId= null;
+
+async function openDeleteModal(id) {
+   deleteId= id;
+
+   //Modal opening
+   let modalId= document.getElementById("deleteCustomerModal");
+   let modal= bootstrap.Modal.getInstance(modalId) || new bootstrap.Modal(modalId);
+   modal.show();
+}
+
+//Delete customer
+async function deleteCustomer(){
+    const deleteUrl= "https://bs-api.sobuj.net/view/customers/deleteCustomer.php";
+
+    try{
+        //check Id
+        if(!deleteId){
+            alert("No customer found");
+            return;
+        }
+        //append id
+        let formData = new FormData();
+        formData.append("customer_id",deleteId);
+
+        //send request
+        let response = await axios.post(deleteUrl,formData);
+
+        //checking response
+        if(response.status === 200){
+            let modalId= document.getElementById("deleteCustomerModal");
+            let modal= bootstrap.Modal.getInstance(modalId) || new bootstrap.Modal(modalId);
+            modal.hide();
+            showMessage();          
+            
+        }else{
+            alert(response.data.message || "delete Unsuccessful");
+        }
+        getAllCustomer();
+        showMessage();
+
+    }catch(err){
+        console.log ("failed to delete customer", err);
+    }   
 }
