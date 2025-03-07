@@ -12,7 +12,7 @@ function showMessage() {
         setTimeout(() => {
             msgDiv.style.display = "none";
         }, 500);
-    }, 3000);    
+    }, 2000);    
 }
 
 //Get all customers
@@ -64,7 +64,7 @@ async function getAllCustomer() {
         });
     }catch(error){
         console.log("error loading customer", error);
-        alert("failed to load customer.");
+        // alert("failed to load customer.");
     }
 }
 getAllCustomer();
@@ -218,15 +218,16 @@ async function deleteCustomer(){
             let modalId= document.getElementById("deleteCustomerModal");
             let modal= bootstrap.Modal.getInstance(modalId) || new bootstrap.Modal(modalId);
             modal.hide();
-            showMessage();          
-            
+            showMessage();
+            getAllCustomer();
+             
+                        
         }else{
             alert(response.data.message || "delete Unsuccessful");
         }
-        getAllCustomer();
-        showMessage();
+             
 
     }catch(err){
         console.log ("failed to delete customer", err);
     }   
-}
+} 

@@ -1,13 +1,16 @@
 function showMessage() {
-    let msgDiv = document.getElementById("successMessage");
-    msgDiv.innerHTML = "Successful!";
-    msgDiv.style.display = "block";
+  let msgDiv = document.getElementById("successMessage");
+  msgDiv.innerHTML = "Successful!";
+  msgDiv.style.display = "block";
 
-    // Hide the message after 3 seconds
-    setTimeout(() => {
-        msgDiv.style.display = "none";
-    }, 3000);
-}      
+  // Hide the message after 3 seconds
+  setTimeout(() => {
+      msgDiv.style.opacity = "0";
+      setTimeout(() => {
+          msgDiv.style.display = "none";
+      }, 500);
+  }, 3000);    
+}     
       
       
       
@@ -168,8 +171,12 @@ function showMessage() {
             );
             modal.hide();
 
+            //show success massage
+            showMessage();
+
             // refresh the order list
             getOrders();
+
           } else {
             console.log("failed to delete");
           }
@@ -323,8 +330,9 @@ function showMessage() {
             document.getElementById("createOrderModal")
           );
           modal.hide();
-          getOrders();
+          
           showMessage();
+          getOrders();
           }
         } catch (e) {
           console.log("Error in creating order", e);
